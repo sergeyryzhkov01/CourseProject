@@ -21,19 +21,19 @@ int main() {
     setlocale(LC_CTYPE, "RUS");
     int choice;
 
-    printf("=== Консольное меню ===\n");
+    printf("=== РљРѕРЅСЃРѕР»СЊРЅРѕРµ РјРµРЅСЋ ===\n");
 
     while (1) {
-        printf("\nВыберите операцию:\n");
-        printf("1 - Значение f(x)\n");
-        printf("2 - Таблица значений\n");
-        printf("3 - Минимум и максимум\n");
-        printf("4 - Поиск x, где f(x) = Y\n");
-        printf("5 - Производная f'(x)\n");
-        printf("0 - Выход\n> ");
+        printf("\nР’С‹Р±РµСЂРёС‚Рµ РѕРїРµСЂР°С†РёСЋ:\n");
+        printf("1 - Р—РЅР°С‡РµРЅРёРµ f(x)\n");
+        printf("2 - РўР°Р±Р»РёС†Р° Р·РЅР°С‡РµРЅРёР№\n");
+        printf("3 - РњРёРЅРёРјСѓРј Рё РјР°РєСЃРёРјСѓРј\n");
+        printf("4 - РџРѕРёСЃРє x, РіРґРµ f(x) = Y\n");
+        printf("5 - РџСЂРѕРёР·РІРѕРґРЅР°СЏ f'(x)\n");
+        printf("0 - Р’С‹С…РѕРґ\n> ");
 
         if (scanf("%d", &choice) != 1) {
-            printf("Ошибка ввода.\n");
+            printf("РћС€РёР±РєР° РІРІРѕРґР°.\n");
             while (getchar() != '\n');
             continue;
         }
@@ -43,54 +43,54 @@ int main() {
 
         switch (choice) {
         case 1:
-            x = input_double("Введите x: ");
+            x = input_double("Р’РІРµРґРёС‚Рµ x: ");
             printf("f(%.6lf) = %.8lf\n", x, f(x));
             break;
 
         case 2:
-            a = input_double("Введите a: ");
+            a = input_double("Р’РІРµРґРёС‚Рµ a: ");
 
-            b = input_double("Введите b: ");
-            step = input_double("Введите шаг: ");
+            b = input_double("Р’РІРµРґРёС‚Рµ b: ");
+            step = input_double("Р’РІРµРґРёС‚Рµ С€Р°Рі: ");
             if (step <= 0 || a >= b) {
-                printf("Ошибка: неправильный интервал.\n");
+                printf("РћС€РёР±РєР°: РЅРµРїСЂР°РІРёР»СЊРЅС‹Р№ РёРЅС‚РµСЂРІР°Р».\n");
                 break;
             }
             table_of_values(a, b, step);
             break;
 
         case 3: {
-            a = input_double("Введите a: ");
-            b = input_double("Введите b: ");
+            a = input_double("Р’РІРµРґРёС‚Рµ a: ");
+            b = input_double("Р’РІРµРґРёС‚Рµ b: ");
             if (a >= b) {
-                printf("Ошибка: a < b обязательно.\n");
+                printf("РћС€РёР±РєР°: a < b РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ.\n");
                 break;
             }
             Extrema e = find_extrema(a, b, 1000);
-            printf("Минимум: f(%.6lf) = %.8lf\n", e.xmin, e.ymin);
-            printf("Максимум f(%.6lf) = %.8lf\n", e.xmax, e.ymax);
+            printf("РњРёРЅРёРјСѓРј: f(%.6lf) = %.8lf\n", e.xmin, e.ymin);
+            printf("РњР°РєСЃРёРјСѓРј f(%.6lf) = %.8lf\n", e.xmax, e.ymax);
             break;
         }
 
         case 4:
-            a = input_double("Введите a: ");
-            b = input_double("Введите b: ");
-            Y = input_double("Введите Y: ");
+            a = input_double("Р’РІРµРґРёС‚Рµ a: ");
+            b = input_double("Р’РІРµРґРёС‚Рµ b: ");
+            Y = input_double("Р’РІРµРґРёС‚Рµ Y: ");
             x = find_x(a, b, Y);
             printf("x = %.6lf, f(x)=%.8lf\n", x, f(x));
             break;
 
         case 5:
-            x = input_double("Введите x: ");
+            x = input_double("Р’РІРµРґРёС‚Рµ x: ");
             printf("f'(%.6lf) = %.8lf\n", x, derivative(x));
             break;
 
         default:
-            printf("Неверный выбор.\n");
+            printf("РќРµРІРµСЂРЅС‹Р№ РІС‹Р±РѕСЂ.\n");
         }
     }
 
-    printf("Выход из программы.\n");
+    printf("Р’С‹С…РѕРґ РёР· РїСЂРѕРіСЂР°РјРјС‹.\n");
     return 0;
 }
 double f(double x) {
@@ -165,7 +165,7 @@ double input_double(const char* msg) {
     double x;
     printf("%s", msg);
     while (scanf("%lf", &x) != 1) {
-        printf("Ошибка ввода. Повторите: ");
+        printf("РћС€РёР±РєР° РІРІРѕРґР°. РџРѕРІС‚РѕСЂРёС‚Рµ: ");
         while (getchar() != '\n');
     }
     return x;
