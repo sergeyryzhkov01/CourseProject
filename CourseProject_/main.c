@@ -5,14 +5,11 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-typedef struct {
-    double xmin, ymin;
-    double xmax, ymax;
-} Extrema;
-
+// Объявление функций
 double f(double x);
 double derivative(double x);
-Extrema find_extrema(double a, double b, int steps);
+double find_min(double a, double b, int steps, double* xmin);
+double find_max(double a, double b, int steps, double* xmax);
 void table_of_values(double a, double b, double step);
 double find_x(double a, double b, double Y);
 double input_double(const char* msg);
@@ -42,6 +39,7 @@ int main() {
         double x, a, b, step, Y;
 
         switch (choice) {
+
         case 1:
             x = input_double("Введите x: ");
             printf("f(%.6lf) = %.8lf\n", x, f(x));
@@ -49,7 +47,6 @@ int main() {
 
         case 2:
             a = input_double("Введите a: ");
-
             b = input_double("Введите b: ");
             step = input_double("Введите шаг: ");
             if (step <= 0 || a >= b) {
@@ -62,13 +59,19 @@ int main() {
         case 3: {
             a = input_double("Введите a: ");
             b = input_double("Введите b: ");
+
             if (a >= b) {
                 printf("Ошибка: a < b обязательно.\n");
                 break;
             }
-            Extrema e = find_extrema(a, b, 1000);
-            printf("Минимум: f(%.6lf) = %.8lf\n", e.xmin, e.ymin);
-            printf("Максимум f(%.6lf) = %.8lf\n", e.xmax, e.ymax);
+
+            double xmin, xmax;
+
+            double ymin = find_min(a, b, 1000, &xmin);
+            double ymax = find_max(a, b, 1000, &xmax);
+
+            printf("Минимум: f(%.6lf) = %.8lf\n", xmin, ymin);
+            printf("Максимум: f(%.6lf) = %.8lf\n", xmax, ymax);
             break;
         }
 
@@ -93,6 +96,7 @@ int main() {
     printf("Выход из программы.\n");
     return 0;
 }
+
 double f(double x) {
     if (x < 0) {
         double denom = log(3 + fabs(x));
@@ -116,24 +120,42 @@ double derivative(double x) {
     return (f(x + h) - f(x - h)) / (2 * h);
 }
 
-Extrema find_extrema(double a, double b, int steps) {
-    Extrema e;
-
+double find_min(double a, double b, int steps, double* xmin) {
     double step = (b - a) / steps;
 
-    e.xmin = a;
-    e.xmax = a;
-    e.ymin = f(a);
-    e.ymax = f(a);
+    double min_x = a;
+    double min_y = f(a);
 
     for (int i = 0; i <= steps; i++) {
         double x = a + i * step;
         double y = f(x);
-
-        if (y < e.ymin) { e.ymin = y; e.xmin = x; }
-        if (y > e.ymax) { e.ymax = y; e.xmax = x; }
+        if (y < min_y) {
+            min_y = y;
+            min_x = x;
+        }
     }
-    return e;
+
+    *xmin = min_x;
+    return min_y;
+}
+
+double find_max(double a, double b, int steps, double* xmax) {
+    double step = (b - a) / steps;
+
+    double max_x = a;
+    double max_y = f(a);
+
+    for (int i = 0; i <= steps; i++) {
+        double x = a + i * step;
+        double y = f(x);
+        if (y > max_y) {
+            max_y = y;
+            max_x = x;
+        }
+    }
+
+    *xmax = max_x;
+    return max_y;
 }
 
 void table_of_values(double a, double b, double step) {
@@ -146,18 +168,22 @@ void table_of_values(double a, double b, double step) {
 
     printf("=============================================\n\n");
 }
-
 double find_x(double a, double b, double Y) {
     double mid, fm;
+
     for (int i = 0; i < 100; i++) {
         mid = (a + b) / 2;
         fm = f(mid);
-        if (fabs(fm - Y) < 1e-6) break;
+
+        if (fabs(fm - Y) < 1e-6)
+            break;
+
         if ((f(a) - Y) * (fm - Y) < 0)
             b = mid;
         else
             a = mid;
     }
+
     return mid;
 }
 
