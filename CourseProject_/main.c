@@ -1,23 +1,23 @@
 #include <stdio.h>
 #include <math.h>
-#include <stdlib.h>
 #include <locale.h>
 
 #define _CRT_SECURE_NO_WARNINGS
 
-// Объявление функций
+// ===== Объявление функций =====
 double f(double x);
 double derivative(double x);
-double find_min(double a, double b, int steps, double* xmin);
-double find_max(double a, double b, int steps, double* xmax);
+double find_min_x(double a, double b, int steps);
+double find_max_x(double a, double b, int steps);
 void table_of_values(double a, double b, double step);
 double find_x(double a, double b, double Y);
 double input_double(const char* msg);
 
+// ===== MAIN =====
 int main() {
     setlocale(LC_CTYPE, "RUS");
-    int choice;
 
+    int choice;
     printf("=== Консольное меню ===\n");
 
     while (1) {
@@ -34,7 +34,9 @@ int main() {
             while (getchar() != '\n');
             continue;
         }
-        if (choice == 0) break;
+
+        if (choice == 0)
+            break;
 
         double x, a, b, step, Y;
 
@@ -50,13 +52,13 @@ int main() {
             b = input_double("Введите b: ");
             step = input_double("Введите шаг: ");
             if (step <= 0 || a >= b) {
-                printf("Ошибка: неправильный интервал.\n");
+                printf("Ошибка: неверный интервал.\n");
                 break;
             }
             table_of_values(a, b, step);
             break;
 
-        case 3: {
+        case 3:
             a = input_double("Введите a: ");
             b = input_double("Введите b: ");
 
@@ -65,22 +67,19 @@ int main() {
                 break;
             }
 
-            double xmin, xmax;
+            double xmin = find_min_x(a, b, 1000);
+            double xmax = find_max_x(a, b, 1000);
 
-            double ymin = find_min(a, b, 1000, &xmin);
-            double ymax = find_max(a, b, 1000, &xmax);
-
-            printf("Минимум: f(%.6lf) = %.8lf\n", xmin, ymin);
-            printf("Максимум: f(%.6lf) = %.8lf\n", xmax, ymax);
+            printf("Минимум:  f(%.6lf) = %.8lf\n", xmin, f(xmin));
+            printf("Максимум: f(%.6lf) = %.8lf\n", xmax, f(xmax));
             break;
-        }
 
         case 4:
             a = input_double("Введите a: ");
             b = input_double("Введите b: ");
             Y = input_double("Введите Y: ");
             x = find_x(a, b, Y);
-            printf("x = %.6lf, f(x)=%.8lf\n", x, f(x));
+            printf("x = %.6lf, f(x) = %.8lf\n", x, f(x));
             break;
 
         case 5:
@@ -97,6 +96,7 @@ int main() {
     return 0;
 }
 
+// ===== Функция f(x) =====
 double f(double x) {
     if (x < 0) {
         double denom = log(3 + fabs(x));
@@ -108,8 +108,8 @@ double f(double x) {
     else {
         double sum = 0.0;
         for (int n = 0; n <= 7; n++) {
-            double denom = tgamma(n + 1) * log(n + 4);
-            sum += pow(-1, n) * pow(x, n) / denom;
+            sum += pow(-1, n) * pow(x, n) /
+                (tgamma(n + 1) * log(n + 4));
         }
         return sum;
     }
@@ -120,9 +120,8 @@ double derivative(double x) {
     return (f(x + h) - f(x - h)) / (2 * h);
 }
 
-double find_min(double a, double b, int steps, double* xmin) {
+double find_min_x(double a, double b, int steps) {
     double step = (b - a) / steps;
-
     double min_x = a;
     double min_y = f(a);
 
@@ -134,14 +133,11 @@ double find_min(double a, double b, int steps, double* xmin) {
             min_x = x;
         }
     }
-
-    *xmin = min_x;
-    return min_y;
+    return min_x;
 }
 
-double find_max(double a, double b, int steps, double* xmax) {
+double find_max_x(double a, double b, int steps) {
     double step = (b - a) / steps;
-
     double max_x = a;
     double max_y = f(a);
 
@@ -153,9 +149,7 @@ double find_max(double a, double b, int steps, double* xmax) {
             max_x = x;
         }
     }
-
-    *xmax = max_x;
-    return max_y;
+    return max_x;
 }
 
 void table_of_values(double a, double b, double step) {
@@ -164,26 +158,24 @@ void table_of_values(double a, double b, double step) {
     printf("=============================================\n");
 
     for (double x = a; x <= b + step / 2; x += step)
-        printf("| %10.4lf | %25.8lf    |\n", x, f(x));
+        printf("| %10.4lf | %25.8lf |\n", x, f(x));
 
     printf("=============================================\n\n");
 }
+
 double find_x(double a, double b, double Y) {
-    double mid, fm;
+    double mid;
 
     for (int i = 0; i < 100; i++) {
         mid = (a + b) / 2;
-        fm = f(mid);
-
-        if (fabs(fm - Y) < 1e-6)
+        if (fabs(f(mid) - Y) < 1e-6)
             break;
 
-        if ((f(a) - Y) * (fm - Y) < 0)
+        if ((f(a) - Y) * (f(mid) - Y) < 0)
             b = mid;
         else
             a = mid;
     }
-
     return mid;
 }
 
